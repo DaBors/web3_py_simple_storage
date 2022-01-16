@@ -1,12 +1,10 @@
 import json
-
-from web3 import Web3
-
+import os
+from dotenv import load_dotenv
 # In the video, we forget to `install_solc`
 # from solcx import compile_standard
 from solcx import compile_standard, install_solc
-import os
-from dotenv import load_dotenv
+from web3 import Web3
 
 load_dotenv()
 
