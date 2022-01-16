@@ -9,6 +9,11 @@ from web3 import Web3
 load_dotenv()
 
 
+def get_transaction_params() -> dict:
+    nonce = w3.eth.getTransactionCount(my_address)
+    return {"chainId": chain_id, "gasPrice": w3.eth.gas_price, "from": my_address, "nonce": nonce}
+
+
 with open("./SimpleStorage.sol", "r") as file:
     simple_storage_file = file.read()
 
@@ -52,21 +57,14 @@ abi = json.loads(
 w3 = Web3(Web3.HTTPProvider("http://0.0.0.0:8545"))
 chain_id = 1337
 my_address = "0xdbB4A708755dfD59f9c4b100B2BE23a6d2EB7D57"
-private_key = "ffdd7a010ab8c089d95a9c2ff24e75b21744b5db26c3cd66d14f8e91c46afcc4"
+private_key = os.getenv("PRIVATE_KEY")
 
 # Create the contract in Python
 SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 # Get the latest transaction
 nonce = w3.eth.getTransactionCount(my_address)
 # Submit the transaction that deploys the contract
-transaction = SimpleStorage.constructor().buildTransaction(
-    {
-        "chainId": chain_id,
-        "gasPrice": w3.eth.gas_price,
-        "from": my_address,
-        "nonce": nonce,
-    }
-)
+transaction = SimpleStorage.constructor().buildTransaction(get_transaction_params())
 # Sign the transaction
 signed_txn = w3.eth.account.sign_transaction(transaction, private_key=private_key)
 print("Deploying Contract!")
@@ -81,14 +79,7 @@ print(f"Done! Contract deployed to {tx_receipt.contractAddress}")
 # Working with deployed Contracts
 simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 print(f"Initial Stored Value {simple_storage.functions.retrieve().call()}")
-greeting_transaction = simple_storage.functions.store(15).buildTransaction(
-    {
-        "chainId": chain_id,
-        "gasPrice": w3.eth.gas_price,
-        "from": my_address,
-        "nonce": nonce + 1,
-    }
-)
+greeting_transaction = simple_storage.functions.store(15).buildTransaction(get_transaction_params())
 signed_greeting_txn = w3.eth.account.sign_transaction(
     greeting_transaction, private_key=private_key
 )
