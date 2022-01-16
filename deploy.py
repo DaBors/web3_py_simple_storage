@@ -37,14 +37,14 @@ compiled_sol = compile_standard(
 with open("compiled_code.json", "w") as file:
     json.dump(compiled_sol, file)
 
+compiled_simple_storage = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]
+
 # get bytecode
-bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"][
-    "bytecode"
-]["object"]
+bytecode = compiled_simple_storage["evm"]["bytecode"]["object"]
 
 # get abi
 abi = json.loads(
-    compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["metadata"]
+    compiled_simple_storage["metadata"]
 )["output"]["abi"]
 
 # w3 = Web3(Web3.HTTPProvider(os.getenv("RINKEBY_RPC_URL")))
