@@ -10,6 +10,7 @@ load_dotenv()
 
 
 def get_transaction_params() -> dict:
+    # Get the latest transaction
     nonce = w3.eth.getTransactionCount(my_address)
     return {"chainId": chain_id, "gasPrice": w3.eth.gas_price, "from": my_address, "nonce": nonce}
 
@@ -61,8 +62,6 @@ private_key = os.getenv("PRIVATE_KEY")
 
 # Create the contract in Python
 SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
-# Get the latest transaction
-nonce = w3.eth.getTransactionCount(my_address)
 # Submit the transaction that deploys the contract
 transaction = SimpleStorage.constructor().buildTransaction(get_transaction_params())
 # Sign the transaction
